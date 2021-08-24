@@ -1,6 +1,10 @@
 'use strict';
 
 const express = require('express');
+const swagger = require('swagger-ui-express');
+const docs = require('./docs');
+const routes = require('./src/app');
+
 const app = express();
 const port = 8010;
 
@@ -15,7 +19,8 @@ const buildSchemas = require('./src/schemas');
 db.serialize(() => {
     buildSchemas(db);
 
-    const app = require('./src/app')(db);
+    routes({ app, db });
+    app.use('/docs', swagger.serve, swagger.setup(docs));
 
     app.listen(port, () => console.log(`App started and listening on port ${port}`));
 });
