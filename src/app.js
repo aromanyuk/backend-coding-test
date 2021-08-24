@@ -1,5 +1,5 @@
 'use strict';
-
+const logger = require('./logger');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
