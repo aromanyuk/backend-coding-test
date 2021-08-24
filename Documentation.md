@@ -7,7 +7,7 @@ The API is responsible for providing a list of rides or single ride with ability
 - Node.js v10
 - NPM
 
-## Roll up
+## Start the server
 
 To start the server locally:
 
