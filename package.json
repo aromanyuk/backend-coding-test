@@ -13,6 +13,7 @@
     "lint": "eslint src/ index.js",
     "coverage": "nyc npm run test:unit"
   },
+  "pre-push": "test",
   "keywords": [
     "Xendit"
   ],
