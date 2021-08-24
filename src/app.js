@@ -1,12 +1,9 @@
 'use strict';
 
-const express = require('express');
-const app = express();
-
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
-module.exports = (db) => {
+module.exports = ({ app, db }) => {
     app.get('/health', (req, res) => res.send('Healthy'));
 
     app.post('/rides', jsonParser, (req, res) => {
