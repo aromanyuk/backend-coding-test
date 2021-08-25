@@ -22,6 +22,7 @@ You can also run each part separately.
 - Eslint `npm run lint`
 - Unit tests `npm run test:unit`
 - Coverage `npm run coverage`
+- Load tests `npm run test:load`
 
 ## Continuous integration
 
