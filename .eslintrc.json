@@ -11,6 +11,10 @@
     "rules": {
         "no-unused-vars": "warn",
         "prefer-const": "error",
-        "eqeqeq": "error"
+        "eqeqeq": "error",
+        "no-console": "warn",
+        "use-isnan": "error",
+        "curly": "error",
+        "semi": "error"
     }
 }

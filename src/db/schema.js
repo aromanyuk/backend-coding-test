@@ -1,8 +1,11 @@
-'use strict';
-
-module.exports = (db) => {
+/**
+ * Initialize schema for rides
+ * @param {*} db 
+ * @returns {*}
+ */
+module.exports = async (db) => {
     const createRideTableSchema = `
-        CREATE TABLE Rides
+        CREATE TABLE IF NOT EXISTS Rides
         (
         rideID INTEGER PRIMARY KEY AUTOINCREMENT,
         startLat DECIMAL NOT NULL,
@@ -16,7 +19,6 @@ module.exports = (db) => {
         )
     `;
 
-    db.run(createRideTableSchema);
-
-    return db;
+    const result = await db.run(createRideTableSchema);
+    return result;
 };
