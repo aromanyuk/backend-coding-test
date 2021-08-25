@@ -13,6 +13,11 @@ const port = 8010;
 async function start() {
     await db.init();
 
+    // Simple request monitoring middleware
+    app.use(function (req, res, next) {
+        logger.info(`[${new Date().toLocaleString()}] ${res.statusCode} ${req.method} -> ${req.originalUrl}`);
+        next();
+    });
     routes(app);
 
     // Init swagger documentation route

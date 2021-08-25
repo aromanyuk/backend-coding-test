@@ -22,19 +22,6 @@ describe('API tests', () => {
         });
     });
 
-    describe('GET /rides', () => {
-        it('should return error "no rides"', (done) => {
-            request(routes)
-                .get('/rides?page=0&page_size=5')
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .expect({
-                    error_code: 'RIDES_NOT_FOUND_ERROR',
-                    message: 'Could not find any rides'
-                }, done);
-        });
-    });
-
     describe('POST /rides', () => {
         it('should reply with error for invalid start_lat', (done) => {
             request(routes)
@@ -228,6 +215,47 @@ describe('API tests', () => {
                 .expect({
                     error_code: 'VALIDATION_ERROR',
                     message: 'id must be an integer'
+                }, done);
+        });
+    });
+
+    describe(`SQL Injection tests`, () => {
+        it('POST /rides', (done) => {
+            request(routes)
+                .post('/rides')
+                .send({
+                    "start_lat": 41.874,
+                    "start_long": -102.9923,
+                    "end_lat": 41.874,
+                    "end_long": -102.9923,
+                    "rider_name": "'Morty' OR 42=42",
+                    "driver_name": "Rick' OR 42=42",
+                    "driver_vehicle": "\\'DeLorean\' OR 'DMC-12' = 'DMC-12'"
+                })
+                .expect(200)
+                .expect((res) => {
+                    const expectedValues = {
+                        "startLat": 41.874,
+                        "startLong": -102.9923,
+                        "endLat": 41.874,
+                        "endLong": -102.9923,
+                        "riderName": "'Morty' OR 42=42",
+                        "driverName": "Rick' OR 42=42",
+                        "driverVehicle": "\\'DeLorean\' OR 'DMC-12' = 'DMC-12'",
+                    };
+                    Object.keys(expectedValues).forEach((key) => {
+                        assert.strictEqual(res.body[0][key], expectedValues[key]);
+                    });
+                }).end(done);
+        });
+        it('GET /rides', (done) => {
+            request(routes)
+                .get(`/rides?page=0&page_size=10 union select 1 = 1 --`)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .expect({
+                    error_code: 'VALIDATION_ERROR',
+                    message: 'page size must be an integer'
                 }, done);
         });
     });
