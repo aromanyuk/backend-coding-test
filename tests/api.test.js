@@ -1,27 +1,16 @@
-'use strict';
-
 const request = require('supertest');
 const assert = require('assert');
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(':memory:');
+const db = require('../src/db');
 const express = require('express');
 const app = express();
 
-const routes = require('../src/app')({ app, db });
-const buildSchemas = require('../src/schemas');
+const routes = require('../src/routes')(app);
 
 let rideID;
 describe('API tests', () => {
     before((done) => {
-        db.serialize((err) => { 
-            if (err) {
-                return done(err);
-            }
-
-            buildSchemas(db);
-
-            done();
-        });
+        db.init().then(done);
     });
 
     describe('GET /health', () => {
