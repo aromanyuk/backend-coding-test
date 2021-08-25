@@ -76,7 +76,15 @@ module.exports = ({ app, db }) => {
     });
 
     app.get('/rides', (req, res) => {
-        db.all('SELECT * FROM Rides', function (err, rows) {
+        const page = Number(req.query.page);
+        const pageSize = Number(req.query.page_size);
+        if(Number.isNaN(page)|| Number.isNaN(pageSize)) {
+            return res.send({
+                error_code: 'VALIDATION_ERROR',
+                message: 'page and page_size should be numbers'
+            });
+        }
+        db.all(`SELECT * FROM Rides LIMIT ${pageSize} OFFSET ${page*pageSize}`, function (err, rows) {
             if (err) {
                 logger.error(`Error ${err.message}`);
                 return res.send({
