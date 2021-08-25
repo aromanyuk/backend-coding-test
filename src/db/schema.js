@@ -1,3 +1,8 @@
+/**
+ * Initialize schema for rides
+ * @param {*} db 
+ * @returns {*}
+ */
 module.exports = async (db) => {
     const createRideTableSchema = `
         CREATE TABLE IF NOT EXISTS Rides
