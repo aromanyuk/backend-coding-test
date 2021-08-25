@@ -1,6 +1,6 @@
+/* eslint-disable no-undef */
 const request = require('supertest');
 const assert = require('assert');
-const sqlite3 = require('sqlite3').verbose();
 const db = require('../src/db');
 const express = require('express');
 const app = express();
@@ -36,7 +36,7 @@ describe('API tests', () => {
     });
 
     describe('POST /rides', () => {
-        it('should reply with error for invalid start_lat and start_long', (done) => {
+        it('should reply with error for invalid start_lat', (done) => {
             request(routes)
                 .post('/rides')
                 .send({
@@ -51,16 +51,16 @@ describe('API tests', () => {
                 .expect(200)
                 .expect({
                     error_code: 'VALIDATION_ERROR',
-                    message: 'Start latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively'
+                    message: 'Start latitude must be between -90 to 90 degrees'
                 }, done);
         });
-        it('should reply with error for invalid end_lat and end_long', (done) => {
+        it('should reply with error for invalid end_long', (done) => {
             request(routes)
                 .post('/rides')
                 .send({
                     "start_lat": 41.874,
                     "start_long": -102.9923,
-                    "end_lat": 999,
+                    "end_lat": -80.327,
                     "end_long": 999,
                     "rider_name": "Morty",
                     "driver_name": "Rick",
@@ -69,7 +69,7 @@ describe('API tests', () => {
                 .expect(200)
                 .expect({
                     error_code: 'VALIDATION_ERROR',
-                    message: 'End latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively'
+                    message: 'End longitude must be between -180 to 180 degrees'
                 }, done);
         });
         it('should reply with error for invalid rider_name', (done) => {
@@ -174,7 +174,7 @@ describe('API tests', () => {
                 .expect(200)
                 .expect({
                     error_code: 'VALIDATION_ERROR',
-                    message: 'page and page_size should be numbers'
+                    message: 'page must be an integer'
                 }, done);
         });
         it('should return empty response for too large page number', (done) => {
@@ -210,7 +210,7 @@ describe('API tests', () => {
                     });
                 }).end(done);
         });
-        it('should return error for invalid rideID', (done) => {
+        it('should return error for fake rideID', (done) => {
             request(routes)
                 .get(`/rides/999`)
                 .expect('Content-Type', /json/)
@@ -218,6 +218,16 @@ describe('API tests', () => {
                 .expect({
                     error_code: 'RIDES_NOT_FOUND_ERROR',
                     message: 'Could not find any rides'
+                }, done);
+        });
+        it('should return error for invalid rideID', (done) => {
+            request(routes)
+                .get(`/rides/rideid`)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .expect({
+                    error_code: 'VALIDATION_ERROR',
+                    message: 'id must be an integer'
                 }, done);
         });
     });
