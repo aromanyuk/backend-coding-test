@@ -36,7 +36,7 @@ describe('API tests', () => {
     describe('GET /rides', () => {
         it('should return error "no rides"', (done) => {
             request(routes)
-                .get('/rides')
+                .get('/rides?page=0&page_size=5')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .expect({
@@ -156,7 +156,7 @@ describe('API tests', () => {
     describe('GET /rides', () => {
         it('should return rides', (done) => {
             request(routes)
-                .get('/rides')
+                .get('/rides?page=0&page_size=5')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .expect((res) => {
@@ -177,6 +177,26 @@ describe('API tests', () => {
                     rideID = res.body[0].rideID;
                     done();
                 }).catch((error) => done(error));
+        });
+        it('should fail with invalid pagination', (done) => {
+            request(routes)
+                .get('/rides?page=hack&page_size="1 = 1')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .expect({
+                    error_code: 'VALIDATION_ERROR',
+                    message: 'page and page_size should be numbers'
+                }, done);
+        });
+        it('should return empty response for too large page number', (done) => {
+            request(routes)
+                .get('/rides?page=999&page_size=5')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .expect({
+                    error_code: 'RIDES_NOT_FOUND_ERROR',
+                    message: 'Could not find any rides'
+                }, done);
         });
     });
 
