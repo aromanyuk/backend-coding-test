@@ -15,6 +15,7 @@ async function start() {
 
     routes(app);
 
+    // Init swagger documentation route
     app.use('/docs', swagger.serve, swagger.setup(docs));
     app.listen(port, () => logger.info(`App started and listening on port ${port}`));
 }
