@@ -1,49 +1,35 @@
 const logger = require('../logger');
 const Ride = require('../db/ride');
+const validator = require('../validators/post_ride_validator');
 
+/**
+ * Create a ride using request payload
+ * @param {Number} req.body.start_lat 
+ * @param {Number} req.body.start_long 
+ * @param {Number} req.body.end_lat 
+ * @param {Number} req.body.end_long 
+ * @param {String} req.body.rider_name 
+ * @param {String} req.body.driver_name 
+ * @param {String} req.body.driver_vehicle 
+ * @param {*} res 
+ */
 module.exports = async (req, res) => {
-    const startLat= Number(req.body.start_lat);
-    const startLong = Number(req.body.start_long);
-    const endLat = Number(req.body.end_lat);
-    const endLong = Number(req.body.end_long);
-    const riderName = req.body.rider_name;
-    const driverName = req.body.driver_name;
-    const driverVehicle = req.body.driver_vehicle;
-
-    if (startLat < -90 || startLat > 90 || startLong < -180 || startLong > 180) {
+    const { error } = validator.validate(req.body);
+    if(error) {
         return res.send({
             error_code: 'VALIDATION_ERROR',
-            message: 'Start latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively'
+            message: error.message,
         });
     }
-
-    if (endLat < -90 || endLat > 90 || endLong < -180 || endLong > 180) {
-        return res.send({
-            error_code: 'VALIDATION_ERROR',
-            message: 'End latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively'
-        });
-    }
-
-    if (typeof riderName !== 'string' || riderName.length < 1) {
-        return res.send({
-            error_code: 'VALIDATION_ERROR',
-            message: 'Rider name must be a non empty string'
-        });
-    }
-
-    if (typeof driverName !== 'string' || driverName.length < 1) {
-        return res.send({
-            error_code: 'VALIDATION_ERROR',
-            message: 'Driver name must be a non empty string'
-        });
-    }
-
-    if (typeof driverVehicle !== 'string' || driverVehicle.length < 1) {
-        return res.send({
-            error_code: 'VALIDATION_ERROR',
-            message: 'Vehicle name must be a non empty string'
-        });
-    }
+    const {
+        start_lat: startLat,
+        start_long: startLong,
+        end_lat: endLat,
+        end_long: endLong,
+        rider_name: riderName,
+        driver_name: driverName,
+        driver_vehicle: driverVehicle,
+    } = req.body;
     
     let reply;
     try {

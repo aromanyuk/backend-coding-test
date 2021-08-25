@@ -1,15 +1,24 @@
 const logger = require('../logger');
 const Ride = require('../db/ride');
+const validator = require('../validators/get_rides_validator');
 
+/**
+ * Handle request for list of rides with pagination
+ * @param {Number} req.query.page
+ * @param {Number} req.query.page_size
+ * @param {*} res 
+ */
 module.exports = async (req, res) => {
-    const page = Number(req.query.page);
-    const pageSize = Number(req.query.page_size);
-    if(Number.isNaN(page) || Number.isNaN(pageSize)) {
+    const { error } = validator.validate(req.query);
+    if(error) {
         return res.send({
             error_code: 'VALIDATION_ERROR',
-            message: 'page and page_size should be numbers'
+            message: error.message,
         });
     }
+    const page = Number(req.query.page);
+    const pageSize = Number(req.query.page_size);
+    
     let reply;
     try {
         const result = await Ride.get({ page, pageSize });
