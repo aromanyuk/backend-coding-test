@@ -4,8 +4,10 @@ const request = require('supertest');
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(':memory:');
+const express = require('express');
+const app = express();
 
-const app = require('../src/app')(db);
+const routes = require('../src/app')({ app, db });
 const buildSchemas = require('../src/schemas');
 
 describe('API tests', () => {
@@ -23,7 +25,7 @@ describe('API tests', () => {
 
     describe('GET /health', () => {
         it('should return health', (done) => {
-            request(app)
+            request(routes)
                 .get('/health')
                 .expect('Content-Type', /text/)
                 .expect(200, done);
