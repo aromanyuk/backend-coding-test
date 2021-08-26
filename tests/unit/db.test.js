@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const assert = require('assert');
-const db = require('../src/db');
+const db = require('../../src/db');
 const sinon = require('sinon');
 
 describe('DB tests', () => {

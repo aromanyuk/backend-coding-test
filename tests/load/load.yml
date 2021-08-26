@@ -1,0 +1,32 @@
+config:
+  target: "http://localhost:8010"
+  ensure:
+    p99: 50
+  phases:
+    - duration: 30
+      arrivalRate: 100
+scenarios:
+  - name: "Health"
+    flow:
+      - get:
+          url: "/health"
+  - name: "Create ride"
+    flow:
+      - post:
+          url: "/rides"
+          json:
+            start_lat: 999
+            start_long: 999
+            end_lat: 41.874
+            end_long: -102.9923
+            rider_name: "Morty"
+            driver_name: "Rick"
+            driver_vehicle: "DeLorean DMC-12"
+  - name: "Get rides"
+    flow:
+      - get:
+          url: "/rides?page=0&page_size=50"
+  - name: "Get single ride"
+    flow:
+      - get:
+          url: "/rides/1"

@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
 const request = require('supertest');
 const assert = require('assert');
-const db = require('../src/db');
+const db = require('../../src/db');
 const express = require('express');
 const app = express();
 
-const routes = require('../src/routes')(app);
+const routes = require('../../src/routes')(app);
 
 let rideID;
 describe('API tests', () => {
